@@ -1,0 +1,124 @@
+!
+!name: Thomas Williamson
+!Student Id: 588206
+!CMPT360 spring 2021
+!assignment #1
+!title: calculate triangle on complex plane
+!
+
+program helloworld
+
+implicit none
+
+!gets inputs
+character*100 :: point1
+real :: pint1V(2)
+real :: pint2V(2)
+real :: pint3V(2)
+character*100 :: point2
+character*100 :: point3
+REAL, PARAMETER :: Pi = 3.1415927
+
+!gets lengths
+real :: length12
+real :: length32
+real :: length31
+!gets angle of each point
+real :: angle1
+real :: angle2
+real :: angle3 
+
+
+print *, 'input point 1 as "a + bi"'
+read *, point1
+pint1V = getinput(point1)
+print *, 'input point 2 as "a + bi"'
+read *, point2
+pint2V = getinput(point2)
+print *,'input point 3 as "a + bi"'
+read *, point3 
+pint3V = getinput(point3)
+
+length12 = getLength(pint1V, pint2V)
+length32 = getLength(pint3V, pint2V)
+length31 = getLength(pint3V, pint1V)
+!gets angle of each point
+angle1 = (acos(((length12**2)+(length31**2)-(length32**2))/(2*length12*length31)))*(180/pi)
+angle2 = (acos(((length12**2)+(length32**2)-(length31**2))/(2*length12*length32)))*(180/pi)
+angle3 = (acos(((length32**2)+(length31**2)-(length12**2))/(2*length32*length31)))*(180/pi)
+    
+!prints results 
+print *, "point1 angle: ", angle1
+print *, "point2 angle: ", angle2
+print *, "point3 angle: ", angle3
+print *, "length point1 - point2: ", length12
+print *, "length point2 - point3: ", length32
+print *, "length point1 - point3: ", length31
+
+
+contains
+    
+    !check valididty 
+    function valueCheck(point) result(torf)
+        implicit none
+        logical :: torf
+        character*100 :: point
+        integer :: c
+        torf = .true.
+        !print *, point
+        do c=1, len(trim(point))-1, 1
+           ! print*, point(c:c)
+            if (.not. ((point(c:c) >= "0") .and. (point(c:c) <= '9') .or. (point(c:c) == "+") .or. (point(c:c) == " ")) ) then
+                torf = .false.
+                exit
+            end if
+        end do
+    end function valueCheck
+    
+   ! check valididty of input and change input to int
+    recursive function getinput(point) result(pointV)
+        implicit none
+        character*100 :: point
+        real :: pointV(2)
+        !print*, point
+        !print*, point(len(trim(point)):len(trim(point)))
+        if ((point(len(trim(point)):len(trim(point))) == 'i') .and. valueCheck(point)) then
+            read(point(1:(index(point, "+")-1)) ,*) pointV(1) 
+            read(point((index(trim(point), "+")+1):len(trim(point))-1) ,*) pointV(2)
+        else
+            print *, 'Error incorect type\ntry again?\ninput point as "a + bi"'
+            read *, point
+            pointV = getinput(point)
+        end if
+    end function getinput
+    
+    !calculates length form each point to point 
+    function getLength(pintV, pintV4) result(length)
+        implicit none
+        real :: pintV(2)
+        real :: pintV4(2)
+        real :: templeng1, templeng2, length
+
+        if (pintV(1) <= pintV4(1)) then
+            templeng1 = (pintV4(1)-pintV(1))
+            if(pintV(2) <= pintV4(2)) then
+                templeng2 = pintV4(2)-pintV(2)
+            else
+                templeng2 = pintV(2)-pintV4(2)
+            end if
+        else
+            templeng1 = pintV(1)-pintV4(1)
+            if (pintV(2) <= pintV4(2)) then
+                templeng2 = pintV4(2)-pintV(2)
+            else
+                templeng2 = pintV(2)-pintV4(2)
+            end if
+        end if
+        length = (sqrt((templeng1**2)+(templeng2**2)))
+    end function getLength
+
+
+
+
+    
+end program helloworld
